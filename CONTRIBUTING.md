@@ -53,3 +53,5 @@ table below" is.
 
 Open an issue. A good issue for a factual error names the file and line and, ideally, the
 command whose output disagrees with the text — the same standard the prose holds itself to.
+
+<!-- gate test: this line verifies the PR flow and is removed before merge -->
