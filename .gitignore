@@ -1,0 +1,19 @@
+# virtualenvs
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# output of a local run of 03_channels_4_vs_16.py; the committed reference run
+# lives in examples/offline-bi2014a/results/ and is NOT ignored
+examples/offline-bi2014a/my_results/
+
+# local convenience symlink to the MOABB download cache (~/mne_data).
+# it points outside the repository and would be broken for anyone else.
+examples/offline-bi2014a/data
+
+# MOABB/MNE caches if anyone runs from inside the tree
+*.hdf5
+
+# Obsidian vault state (local workspace, panes, appearance)
+.obsidian/

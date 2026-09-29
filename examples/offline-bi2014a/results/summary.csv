@@ -1,0 +1,5 @@
+channel_set,cv_protocol,pipeline,mean,std,count
+16ch_full,within_session,ERPCov+LogReg,0.83091027,0.10517522,64
+16ch_full,within_session,XdawnCov+LogReg,0.8464485,0.10132835,64
+4ch_frontal,within_session,ERPCov+LogReg,0.65896565,0.09853009,64
+4ch_frontal,within_session,XdawnCov+LogReg,0.6497038,0.09723751,64

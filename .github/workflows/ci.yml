@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  fast-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the light dependencies
+        run: pip install numpy scipy pandas pyyaml
+
+      - name: Read the committed sample files (no download)
+        run: python3 examples/offline-bi2014a/01_read_formats.py
+
+      - name: Check both device descriptions against real recordings
+        run: |
+          python3 src/check_device.py docs/30-adapting/muse-4ch-consumer.md \
+            examples/offline-bi2014a/sample/muse_raw_excerpt.csv
+          python3 src/check_device.py docs/30-adapting/bi2014a-16ch-dry.md \
+            examples/offline-bi2014a/sample/bi2014a_subject01_excerpt.mat
+
+      - name: The checker must still catch a wrong sample rate
+        run: |
+          sed 's/sample_rate_hz: 250/sample_rate_hz: 256/' \
+            docs/30-adapting/muse-4ch-consumer.md > /tmp/muse-wrong-rate.md
+          python3 src/check_device.py /tmp/muse-wrong-rate.md \
+            examples/offline-bi2014a/sample/muse_raw_excerpt.csv | tee /tmp/check.out
+          grep -q "MISMATCH" /tmp/check.out
+
+      - name: Every relative markdown link resolves
+        run: |
+          python3 - <<'PY'
+          import re, sys, pathlib
+          root = pathlib.Path(".").resolve()
+          bad = 0
+          for md in root.rglob("*.md"):
+              if ".git" in md.parts or ".venv" in md.parts:
+                  continue
+              for m in re.finditer(r"\]\((?!https?:|#|mailto:|app:)([^)#]+)", md.read_text()):
+                  target = (md.parent / m.group(1)).resolve()
+                  if not target.exists():
+                      print(f"BROKEN {md.relative_to(root)} -> {m.group(1)}")
+                      bad += 1
+          print(f"broken links: {bad}")
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: No private references
+        run: |
+          if grep -rniE "marbles|ease|patient" . \
+               --exclude-dir=.git --exclude-dir=.github --exclude-dir=.venv \
+             | grep -viE "disease|please|release|increase|decrease"; then
+            echo "found terms that must not appear in this repository"; exit 1
+          fi
+          echo "clean"

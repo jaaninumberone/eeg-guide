@@ -1,0 +1,10 @@
+# Pinned to the versions these results were produced with (2026-09).
+# Later versions will very likely work; pinning is so that a difference in the
+# numbers is a difference in your data, not in someone's default parameter.
+moabb==1.7.2
+mne==1.13.2
+pyriemann==0.12
+scikit-learn==1.9.1
+numpy
+scipy
+pandas
